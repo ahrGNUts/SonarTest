@@ -77,6 +77,7 @@ void loop() {
     Serial.println(" cm");
   }
 
+  // depending on distance, light up LEDs on an LED bar graph that correspond to distance
   if(cm < 10) {
     writeICPins(0);
     writeDigitalPins(1);
@@ -123,6 +124,7 @@ void loop() {
   
 }
 
+// my shift register only supports 8 outputs per chip, so I had to use 2 digital pins
 void writeDigitalPins(int numPins){
   if(numPins == 1){
     digitalWrite(TEN, HIGH);
@@ -146,87 +148,20 @@ void writeICPins(int numLEDs) {
     for(int i = 7; i >=0; i--){
       out[i] = false; 
     }
-  }// the following isn't the prettiest way to do this, but it works
-   // wouldn't be the best choice for a larger shift register though
-  else if(numLEDs == 1){
-    out[7] = true;
-    out[6] = false;
-    out[5] = false;
-    out[4] = false;
-    out[3] = false;
-    out[2] = false;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 2){
-    out[7] = true;
-    out[6] = true;
-    out[5] = false;
-    out[4] = false;
-    out[3] = false;
-    out[2] = false;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 3){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = false;
-    out[3] = false;
-    out[2] = false;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 4){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = true;
-    out[3] = false;
-    out[2] = false;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 5){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = true;
-    out[3] = true;
-    out[2] = false;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 6){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = true;
-    out[3] = true;
-    out[2] = true;
-    out[1] = false;
-    out[0] = false;
-  }
-  else if(numLEDs == 7){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = true;
-    out[3] = true;
-    out[2] = true;
-    out[1] = true;
-    out[0] = false;
-  }
-  else if(numLEDs == 8){
-    out[7] = true;
-    out[6] = true;
-    out[5] = true;
-    out[4] = true;
-    out[3] = true;
-    out[2] = true;
-    out[1] = true;
-    out[0] = true;
+  }// worked out a far more efficient way to go about this
+  else if(leds == 8)
+      for(int i = 7; i >= 0; i--)
+        out[i] = true;
+    else
+    {
+      for(int i = 7, k = 0; i > 0; i--, k++)
+      {
+        if(k < leds)
+          out[i] = true;
+        else
+          out[i] = false;
+      }
+    }
   }
 
   for(int i = 7; i >= 0; i--){
